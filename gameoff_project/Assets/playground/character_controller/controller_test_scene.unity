@@ -271,10 +271,11 @@ MonoBehaviour:
   _acceleration: 70
   _groundLinearDrag: 8
   _topSpeed: 12
-  _jumpingForce: 8.5
-  _airLinearDrag: 0.2
+  _jumpingForce: 10
+  _airLinearDrag: 2.5
+  _fallGravityMultiplier: 8
+  _lowJumpFallGravityMultiplier: 5
   _jumpBuffer: 0.2
-  _fallGravityMultiplier: 5
   _groundLayer:
     serializedVersion: 2
     m_Bits: 8

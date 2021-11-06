@@ -11,15 +11,16 @@ public class CaracterController : MonoBehaviour {
     [SerializeField] private Rigidbody2D _rb;
 
     [Header("Movement params:")]
-    [SerializeField] private float _acceleration = 50f;
-    [SerializeField] private float _groundLinearDrag = 10f;
+    [SerializeField] private float _acceleration = 70f;
+    [SerializeField] private float _groundLinearDrag = 8f;
     [SerializeField] private float _topSpeed = 12f;
 
     [Header("Jump params:")]
-    [SerializeField] private float _jumpingForce = 8f;
-    [SerializeField] private float _airLinearDrag = 6f;
+    [SerializeField] private float _jumpingForce = 10f;
+    [SerializeField] private float _airLinearDrag = 2.5f;
+    [SerializeField] private float _fallGravityMultiplier = 8f;
+    [SerializeField] private float _lowJumpFallGravityMultiplier = 5f;
     [SerializeField] private float _jumpBuffer = 0.2f;
-    [SerializeField] private float _fallGravityMultiplier = 12f;
 
     [Header("Collision params:")]
     [SerializeField] private LayerMask _groundLayer;
@@ -36,22 +37,25 @@ public class CaracterController : MonoBehaviour {
 
     private void Update() {
         _horizontalDirection = GetPlayerMovementInput();
-        if (GetPlayerJumpInput()) _currentJumpBuffer = _jumpBuffer;
-        _currentJumpBuffer -= Time.deltaTime;
+        if (IsJumpBtnPressed()) _currentJumpBuffer = _jumpBuffer;
+        else _currentJumpBuffer -= Time.deltaTime;
     }
     
     private void FixedUpdate() {
         Move();
-        if (_canJump && _shouldJump) Jump();
+        if (_canJump && _jumpBuffered) Jump();
         ApplyDrag();
         ApplyGravity();
     }
+
+    private void OnDrawGizmos() => Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _groundRaycastLength);
 
     
     #region Player Input
 
     private float GetPlayerMovementInput() => Input.GetAxisRaw("Horizontal");
-    private bool GetPlayerJumpInput() => Input.GetButtonDown("Jump");
+    private bool IsJumpBtnPressed() => Input.GetButtonDown("Jump");
+    private bool IsJumpBtnStillPressed() => Input.GetButton("Jump");
     
     #endregion
     
@@ -59,9 +63,8 @@ public class CaracterController : MonoBehaviour {
     #region Movement
 
     private float _horizontalDirection;
-    private bool _isMoving => _horizontalDirection != 0;
     private bool _isStopping => _horizontalDirection == 0;
-    private bool _IsChangingDirection => (_movingToRight && _goLeft) || (_movingToLeft && _goRight);
+    private bool _isChangingDirection => (_movingToRight && _goLeft) || (_movingToLeft && _goRight);
     private bool _movingToLeft => _rb.velocity.x < 0f;
     private bool _movingToRight => _rb.velocity.x > 0f;
     private bool _goLeft => _horizontalDirection < 0f;
@@ -83,8 +86,8 @@ public class CaracterController : MonoBehaviour {
     #region Jump
     
     private float _currentJumpBuffer = 0;
-    private bool _shouldJump => _currentJumpBuffer > 0;
     private bool _canJump => _isGrounded;
+    private bool _jumpBuffered => _currentJumpBuffer > 0;
 
     private void Jump() => _rb.AddForce(Vector2.up * _jumpingForce, ForceMode2D.Impulse);
 
@@ -96,18 +99,23 @@ public class CaracterController : MonoBehaviour {
     // TODO: The change to the RB drag & gravityScale values should be event driven
 
     private bool _isFalling => _rb.velocity.y < 0;
+    private bool _isAscending => _rb.velocity.y > 0;
 
     private void ApplyDrag() { 
         if (_isGrounded) ApplyGroundLinearDrag();
         else ApplyAirLinearDrag();
     }
-    private void ApplyGravity() => _rb.gravityScale = _isFalling ? _fallGravityMultiplier : 1;
-    private void ApplyGroundLinearDrag() => _rb.drag = _isStopping || _IsChangingDirection ? _groundLinearDrag : 0;
+
+    private void ApplyGravity() {
+        if (_isAscending && !IsJumpBtnStillPressed())
+            _rb.gravityScale = _lowJumpFallGravityMultiplier;
+        else 
+            _rb.gravityScale = _isFalling ? _fallGravityMultiplier : 1;
+    }
+
+    private void ApplyGroundLinearDrag() => _rb.drag = _isStopping || _isChangingDirection ? _groundLinearDrag : 0;
     private void ApplyAirLinearDrag() => _rb.drag = _airLinearDrag;
 
     #endregion
-
-
-    private void OnDrawGizmos() => Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _groundRaycastLength);
 
 }
