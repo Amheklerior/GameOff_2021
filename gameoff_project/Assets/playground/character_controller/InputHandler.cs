@@ -19,9 +19,12 @@ public sealed class InputHandler {
 
     public InputHandler(InputMap _map) => _inputMap = _map;
     public InputHandler() : this(DEFAULT_MAP) {}
-    
-    public float GetPlayerMovementInput() => Input.GetAxisRaw(_inputMap.MovementAxisId);
-    public bool IsJumpBtnPressed() => Input.GetButtonDown(_inputMap.JumpButtonId);
-    public bool IsJumpBtnStillPressed() => Input.GetButton(_inputMap.JumpButtonId);
+
+    public bool IsLeft => Input.GetAxisRaw(_inputMap.MovementAxisId) < 0;
+    public bool IsRight => Input.GetAxisRaw(_inputMap.MovementAxisId) > 0;
+    public bool IsMovementInputGiven => Input.GetAxisRaw(_inputMap.MovementAxisId) != 0;
+    public float PlayerMovementInput => Input.GetAxisRaw(_inputMap.MovementAxisId);
+    public bool IsJumpBtnPressed => Input.GetButtonDown(_inputMap.JumpButtonId);
+    public bool IsJumpBtnStillPressed => Input.GetButton(_inputMap.JumpButtonId);
     
 }

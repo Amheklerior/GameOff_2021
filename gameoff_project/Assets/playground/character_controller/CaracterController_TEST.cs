@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class CaracterController : MonoBehaviour {
+public class CaracterController_TEST : MonoBehaviour {
     
     #region Inspector
 
