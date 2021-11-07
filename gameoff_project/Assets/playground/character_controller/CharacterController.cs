@@ -22,7 +22,7 @@ public class CharacterController {
         _jumpingForce = jumpingForce;
         _groundDrag = groundLinearDrag;
         _airDrag = airLinearDrag;
-        _fallGravityMultiplierl = fallGravityMultiplier;
+        _fallGravityMultiplier = fallGravityMultiplier;
         _lowJumpGravityMultiplier = lowJumpGravityMultiplier;
     }
     
@@ -62,25 +62,42 @@ public class CharacterController {
     private const float DEFAULT_GRAVITY_MULTIPLIER = 1f;  
     private float _groundDrag;
     private float _airDrag;
-    private float _fallGravityMultiplierl;
+    private float _fallGravityMultiplier;
     private float _lowJumpGravityMultiplier;
 
-    public void ApplyDragAndGravity(PlayerState state, bool isStopping, bool isChangingDirection, bool isLowJump) {
+    public void ApplyDragAndGravity(PlayerState state, bool isStopping, bool isChangingDirection, bool isLowJump = false, bool isMovementInputGiven = true) {
         switch (state) {
             case PlayerState.GROUNDED: 
-                _body.drag = isStopping || isChangingDirection ? _groundDrag : DEFAULT_DRAG;
+                ApplyGroudDrag(isStopping, isChangingDirection);
                 break;
 
             case PlayerState.JUMPING:
-                _body.gravityScale = isLowJump ? _lowJumpGravityMultiplier : DEFAULT_GRAVITY_MULTIPLIER;
-                _body.drag = _airDrag;
+                ApplyAirDrag(isMovementInputGiven);
+                ApplyJumpingGravityScale(isLowJump);
                 break;
 
             case PlayerState.FALLING:
-                _body.gravityScale = _fallGravityMultiplierl;
-                _body.drag = _airDrag;
+                ApplyAirDrag(isMovementInputGiven);
+                ApplyFallingGravityScale();
                 break;
         }
+    }
+
+    private void ApplyGroudDrag(bool isStopping, bool isChangingDirection) {
+        _body.drag = isStopping || isChangingDirection ? _groundDrag : DEFAULT_DRAG;
+    }
+
+    private void ApplyAirDrag(bool isMovementInputGiven) {
+        if (!isMovementInputGiven) _body.velocity = Vector2.Lerp(_body.velocity, new Vector2(0f, _body.velocity.y), 0.15f);
+        _body.drag = _airDrag;
+    }
+
+    private void ApplyJumpingGravityScale(bool isLowJump) {
+        _body.gravityScale = isLowJump ? _lowJumpGravityMultiplier : DEFAULT_GRAVITY_MULTIPLIER;
+    }
+
+    private void ApplyFallingGravityScale() {
+        _body.gravityScale = _fallGravityMultiplier;
     }
 
     #endregion

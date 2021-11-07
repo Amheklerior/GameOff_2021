@@ -272,7 +272,7 @@ MonoBehaviour:
   _jumpingForce: 10
   _jumpBufferLength: 0.2
   _groundDrag: 8
-  _airDrag: 2.5
+  _airDrag: 0.5
   _fallGravityMultiplier: 8
   _lowJumpGravityMultiplier: 5
   _groundLayer:

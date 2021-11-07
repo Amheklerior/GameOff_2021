@@ -21,7 +21,7 @@ public class Player : MonoBehaviour {
 
     [Header("Drag & gravity params:")]
     [SerializeField] private float _groundDrag = 8f;
-    [SerializeField] private float _airDrag = 2.5f;
+    [SerializeField] private float _airDrag = 0.5f;
     [SerializeField] private float _fallGravityMultiplier = 8f;
     [SerializeField] private float _lowJumpGravityMultiplier = 5f;
 
@@ -39,7 +39,7 @@ public class Player : MonoBehaviour {
     private void FixedUpdate() {
         if (_shouldJump) _controller.Jump(Vector2.up);
         _controller.Move(_movementDir);
-        _controller.ApplyDragAndGravity(_currentState, _isStopping, _isChangingDirection, _isLowJump);
+        _controller.ApplyDragAndGravity(_currentState, _isStopping, _isChangingDirection, _isLowJump, _input.IsMovementInputGiven);
     }
     private void OnDestroy() => TearDown();
     private void OnDrawGizmos() => Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _groundRaycastLength);
