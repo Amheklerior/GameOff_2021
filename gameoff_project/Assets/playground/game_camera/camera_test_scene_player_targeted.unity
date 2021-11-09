@@ -395,18 +395,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2633923893830942796, guid: c9dc5fbbe05ed4120baef0057e34745f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.0000009536743
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633923894252093395, guid: c9dc5fbbe05ed4120baef0057e34745f, type: 3}
-      propertyPath: m_XDamping
-      value: 1.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633923894252093395, guid: c9dc5fbbe05ed4120baef0057e34745f, type: 3}
-      propertyPath: m_DeadZoneWidth
-      value: 0.16
-      objectReference: {fileID: 0}
     - target: {fileID: 2633923894607166722, guid: c9dc5fbbe05ed4120baef0057e34745f, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -454,14 +442,6 @@ PrefabInstance:
     - target: {fileID: 2633923894607166725, guid: c9dc5fbbe05ed4120baef0057e34745f, type: 3}
       propertyPath: m_Name
       value: Camera System
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633923894839561872, guid: c9dc5fbbe05ed4120baef0057e34745f, type: 3}
-      propertyPath: _reframeToCenterDelay
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2633923894839561874, guid: c9dc5fbbe05ed4120baef0057e34745f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.0000009536743
       objectReference: {fileID: 0}
     - target: {fileID: 2633923894839561875, guid: c9dc5fbbe05ed4120baef0057e34745f, type: 3}
       propertyPath: m_Follow
