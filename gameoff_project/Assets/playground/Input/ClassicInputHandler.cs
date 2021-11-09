@@ -1,41 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-
-public interface IInputHandler {
-    bool IsLeft { get; }
-    bool IsRight { get; }
-    bool IsMovementInputGiven { get; }
-    float PlayerMovementInput { get; }
-    bool IsJumpBtnPressed { get; }
-    bool IsJumpBtnStillPressed { get; }
-}
-
-[CreateAssetMenu(menuName = "tmp/cam/Input Handler")]
-public class InputHandler : ScriptableObject, IInputHandler {
-
-    private enum InputType { CLASSIC }
-
-    [Header("Settings:")]
-    [SerializeField] private InputType _type = InputType.CLASSIC;
-
-    private IInputHandler _input;
-
-    void OnEnable() {
-        switch (_type) {
-            case InputType.CLASSIC: 
-            default:
-                _input = new ClassicInputHandler();
-                break;
-        }
-    }
-
-    public bool IsLeft => _input.IsLeft;
-    public bool IsRight => _input.IsRight;
-    public bool IsMovementInputGiven => _input.IsMovementInputGiven;
-    public float PlayerMovementInput => _input.PlayerMovementInput;
-    public bool IsJumpBtnPressed => _input.IsJumpBtnPressed;
-    public bool IsJumpBtnStillPressed => _input.IsJumpBtnStillPressed;
-    
-}
 
 public sealed class ClassicInputHandler : IInputHandler {
 
