@@ -4,60 +4,129 @@ using Cinemachine;
 
 public class PlayerCam : MonoBehaviour {
     
+    #region Inspector interface 
+
     [Header("Dependencies:")]
     [SerializeField] private CinemachineVirtualCamera _cam;
+    [SerializeField] private InputHandler _inputHandler;
 
     [Header("Settings:")]
     [SerializeField][Range(0f, 0.5f)] private float _framingAnticipation = 0.2f;
     [SerializeField][Range(0f, 1f)] private float _reframingTime = 0.5f;
+    [SerializeField][Range(0f, 5f)] private float _reframeToCenterDelay = 1.5f;
 
+    #endregion
 
     void Start() => Init();
 
     void Update() {
-        if (!IsMoving) return;
-        if (!IsTargetFramingProperlySet) SetProperTargetFraming();  
-        if(!IsCurrentShotCloseEnough) ReframeShot();
-        // else Reset_velocity = 0.0f;
-        UpdateTransformPosition();
+        if (IsPlayerMoving) {
+            if (HasNoDeadzone) SetDefaultDeadzone();
+            if (!IsCameraMoving) return;
+            if (!IsTargetFramingProperlySet) {
+                SetProperFramingTarget();
+                ResetReframingToCenterDelay();
+            }
+            if (!IsCurrentShotCloseEnough) ReframeShot();
+            UpdateTransformPosition();
+        } else {
+            if (IsFrameCentered) return;
+            if (!HasCenteringDelayPassed) {
+                ComputeReframingToCenterDelay();
+                return;
+            }
+            if (HasDeadzone) SetNoDeadzone();
+            ReframeShotToCenter();
+        }
+    }
+    
+    private void OnDrawGizmosSelected() {
+        var radius = 2f;
+        var camPosition = transform.position;
+        if (!_transposer) {
+            Gizmos.DrawWireSphere(camPosition, radius);
+        } else {
+            var offsetX = camPosition.x + _transposer.m_ScreenX - _screenCenterX;
+            Gizmos.DrawWireSphere(new Vector3(offsetX, camPosition.y, camPosition.z), radius);
+        }
     }
 
 
     #region Internals
 
     private CinemachineFramingTransposer _transposer;
-
-    private float _prevXPosition;
     private float _targetScreenX;
     private float _screenCenterX = 0.5f;
-    private float _velocity = 0.0f;
-
-    private bool IsMoving => MovingToTheRight || MovingToTheLeft;
-    private bool MovingToTheRight => transform.position.x > _prevXPosition;
-    private bool MovingToTheLeft => transform.position.x < _prevXPosition;
-    private bool IsCurrentShotCloseEnough => Mathf.Approximately(_transposer.m_ScreenX, _targetScreenX);
-    private bool IsTargetFramingProperlySet => (MovingToTheRight && _targetScreenX == _screenCenterX - _framingAnticipation) 
-        || (MovingToTheLeft && _targetScreenX == _screenCenterX + _framingAnticipation);
 
     private void Init() {
         if (!_cam) _cam = GetComponent<CinemachineVirtualCamera>();
         if (!_cam) throw new NullReferenceException("PlayerCam: No virtual camera component has been found!");
+        if (!_inputHandler) throw new NullReferenceException("PlayerCam: No input handler has been provided!");
         _transposer = _cam.GetCinemachineComponent<CinemachineFramingTransposer>();
         _targetScreenX = _transposer.m_ScreenX;
+        _defaultDeadZoneWidth = _transposer.m_DeadZoneWidth;
         _prevXPosition = transform.position.x;
+    }
+
+    #region Player Input helpers
+
+    private bool IsPlayerMoving => _inputHandler.IsMovementInputGiven;
+    private bool MovingToTheRight => _inputHandler.IsRight;
+    private bool MovingToTheLeft => _inputHandler.IsLeft; 
+
+    #endregion
+
+    #region Deadzone management
+
+    private float _defaultDeadZoneWidth;
+    private bool HasDeadzone => _transposer.m_DeadZoneWidth > 0;
+    private bool HasNoDeadzone => !HasDeadzone;
+    private void SetNoDeadzone() => _transposer.m_DeadZoneWidth = 0;
+    private void SetDefaultDeadzone() => _transposer.m_DeadZoneWidth = _defaultDeadZoneWidth;
+
+    #endregion
+
+    #region Action framing management
+
+    private float _prevXPosition;
+    private float _velocity = 0.0f;
+    private bool IsCameraMoving => IsCameraMovingToTheRight || IsCameraMovingToTheLeft;
+    private bool IsCameraMovingToTheRight => transform.position.x > _prevXPosition;
+    private bool IsCameraMovingToTheLeft => transform.position.x < _prevXPosition;
+    private bool IsCurrentShotCloseEnough => Mathf.Approximately(_transposer.m_ScreenX, _targetScreenX);
+    private bool IsTargetFramingProperlySet => (MovingToTheRight && _targetScreenX == _screenCenterX - _framingAnticipation) 
+        || (MovingToTheLeft && _targetScreenX == _screenCenterX + _framingAnticipation);
+
+    private void SetProperFramingTarget() {
+        _targetScreenX = MovingToTheRight 
+            ?  _screenCenterX - _framingAnticipation 
+            : _screenCenterX + _framingAnticipation;
     }
 
     private void ReframeShot() {
         _transposer.m_ScreenX = Mathf.SmoothDamp(_transposer.m_ScreenX, _targetScreenX, ref _velocity, _reframingTime);
     }
 
-    private void SetProperTargetFraming() {
-        _targetScreenX = MovingToTheRight 
-            ?  _screenCenterX - _framingAnticipation 
-            : _screenCenterX + _framingAnticipation;
+    private void UpdateTransformPosition() => _prevXPosition = transform.position.x;
+
+    #endregion
+
+    #region Stationary framing management
+
+    private float _reframeToCenterCounter = 0f;
+
+    private bool IsFrameCentered => Mathf.Approximately(_transposer.m_ScreenX, _screenCenterX);
+    private bool HasCenteringDelayPassed => _reframeToCenterCounter < 0f;
+    
+    private void ComputeReframingToCenterDelay() => _reframeToCenterCounter -= Time.deltaTime;
+
+    private void ResetReframingToCenterDelay() => _reframeToCenterCounter = _reframeToCenterDelay;
+    
+    private void ReframeShotToCenter() {
+        _transposer.m_ScreenX = Mathf.SmoothDamp(_transposer.m_ScreenX, _screenCenterX, ref _velocity, _reframingTime);
     }
 
-    private void UpdateTransformPosition() => _prevXPosition = transform.position.x;
+    #endregion
 
     #endregion
 
