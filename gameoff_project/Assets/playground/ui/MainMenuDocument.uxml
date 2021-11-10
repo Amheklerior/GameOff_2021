@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="styles/Style.uss" />
+    <ui:VisualElement name="background" style="background-color: rgba(0, 0, 0, 0.27); height: auto; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); align-items: center; justify-content: center; flex-grow: 1;">
+        <ui:VisualElement name="logo-and-btns-container" style="align-items: center; justify-content: center; height: 47%; width: 55%;">
+            <ui:VisualElement name="logo-container" style="height: 60%; width: 100%; align-items: center; justify-content: center; background-color: rgb(0, 255, 45); margin-left: 1%; margin-right: 1%; margin-top: 1%; margin-bottom: 1%;">
+                <ui:Label text="GAME LOGO HERE" display-tooltip-when-elided="true" style="font-size: 80%; white-space: normal; -unity-text-align: middle-center; justify-content: center; align-items: center; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="btns-container" style="height: 30%; background-color: rgb(255, 0, 0); border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); align-items: center; justify-content: center; width: 30%; margin-left: 1%; margin-right: 1%; margin-top: 1%; margin-bottom: 1%;">
+                <ui:Button text="Start" display-tooltip-when-elided="true" name="start-btn" class="main-menu-btn-style" />
+                <ui:Button text="Quit" display-tooltip-when-elided="true" name="quit-btn" class="main-menu-btn-style" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
