@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TextDisplayer : MonoBehaviour
 {
     [SerializeField]
-    private Text uiTextComponent;
+    private TMPro.TextMeshProUGUI uiTextComponent;
     [SerializeField]
     private string textToDisplay;
     [SerializeField]
