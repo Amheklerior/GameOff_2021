@@ -8,6 +8,8 @@ public class UIController : MonoBehaviour
 {
     public Button startButton;
     public Button quitButton;
+    public UnityEngine.Events.UnityEvent onClickStartButton;
+    public UnityEngine.Events.UnityEvent onClickQuitButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,7 +17,7 @@ public class UIController : MonoBehaviour
         startButton = root.Q<Button>("start-btn");
         quitButton = root.Q<Button>("quit-btn");
 
-        startButton.clicked += OnClick_StartButton;
+        startButton.clicked += OnClick_StartButton;// OnClick_StartButton;
         quitButton.clicked += OnClick_QuitButton;
     }
 
@@ -23,12 +25,14 @@ public class UIController : MonoBehaviour
     void OnClick_StartButton()
     {
         Debug.Log("START Button pressed");
+        //onClickStartButton.Invoke();
         //SceneManager.LoadScene("name of the scene to load");
     }
 
     void OnClick_QuitButton()
     {
         Debug.Log("QUIT Button pressed");
-        Application.Quit();
+        //onClickQuitButton.Invoke();
+        //Application.Quit();
     }
 }
