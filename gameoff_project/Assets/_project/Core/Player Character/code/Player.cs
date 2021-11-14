@@ -40,8 +40,10 @@ namespace gameoffjam {
         private void Update() => StorePlayerInputs();
         private void FixedUpdate() {
             if (_shouldJump) _controller.Jump(Vector2.up);
+            if (_changedDirection) FlipSprite();
             _controller.Move(_movementDir);
             _controller.ApplyDragAndGravity(_currentState, _isStopping, _isChangingDirection, _isLowJump, _input.IsMovementInputGiven);
+            UpdateAnimController();
         }
         private void OnDestroy() => TearDown();
         private void OnDrawGizmos() => DrawGroundRayChecker();
@@ -70,16 +72,32 @@ namespace gameoffjam {
 
         private Rigidbody2D _rb;
         private CharacterController _controller; 
+        private Animator _animator;
+        private PlayerAnimationController _animController;
+        private SpriteRenderer _sprite;
         private Vector2 _movementDir;
         private float _jumpBuffer = 0f;
         private bool _shouldJump => _canJump && _IsJumpInputBuffered;
         private bool _IsJumpInputBuffered => _jumpBuffer > 0;
         private bool _isLowJump => !_input.IsJumpBtnStillPressed;
+        private bool _isFacingRight => !_sprite.flipX;
+        private bool _isFacingLeft => _sprite.flipX;
+        private bool _changedDirection {
+            get => _controller.IsMovingToTheRight && _isFacingLeft || _controller.IsMovingToTheLeft && _isFacingRight;
+        }
 
         private void SetupDependencies() {
             _rb = GetComponent<Rigidbody2D>();
-            if (!_rb) throw new NullReferenceException("Player: No Rigidbody2D component has been attached to the player object!");
-            if (!_input) throw new NullReferenceException("Player: No ref to the input handler has been found!");
+            if (!_rb) 
+                throw new NullReferenceException("Player: No Rigidbody2D component has been attached to the player object!");
+            _sprite = GetComponent<SpriteRenderer>();
+            if (!_sprite) 
+                Debug.LogWarning("Player: No SpriteRenderer component has been attached to the player object!");
+            _animator = GetComponent<Animator>();
+            if (!_animator) 
+                Debug.LogWarning("Player: No Animator component has been attached to the player object!");
+            if (!_input) 
+                throw new NullReferenceException("Player: No ref to the input handler has been found!");
         }
 
         private void Init() {
@@ -93,6 +111,7 @@ namespace gameoffjam {
                 _fallGravityMultiplier,
                 _lowJumpGravityMultiplier
             );
+            if (_animator) _animController = new PlayerAnimationController(_animator);
         }
 
         private void TearDown() {
@@ -102,9 +121,20 @@ namespace gameoffjam {
         
         private void StorePlayerInputs() {
             _movementDir = Vector2.right * _input.PlayerMovementInput;
-            if (_input.IsJumpBtnPressed) _jumpBuffer = _jumpBufferLength;
+            if (_input.IsJumpBtnPressed) {
+                _animController.StartJumpAnimation();
+                _jumpBuffer = _jumpBufferLength;
+            }
             else _jumpBuffer -= Time.deltaTime;
         }
+
+        private void UpdateAnimController() { 
+            _animController.UpdateGroundedCheck(_isGrounded);
+            _animController.UpdateMovingSpeed(Mathf.Abs(_rb.velocity.x));
+            _animController.UpdateJumpingSpeed(_rb.velocity.y);
+        }
+
+        private void FlipSprite() => _sprite.flipX = !_sprite.flipX;
 
         private void DrawGroundRayChecker() { 
             Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _groundRaycastLength);

@@ -30,8 +30,9 @@ namespace gameoffjam {
 
         private float _acceleration;
         private float _topSpeed;
-        public bool IsMovingToTheRight => _body.velocity.x > 0;
-        public bool IsMovingToTheLeft => _body.velocity.x < 0;
+
+        public bool IsMovingToTheRight => _body.velocity.x > 0.001;
+        public bool IsMovingToTheLeft => _body.velocity.x < -0.001;
 
         public void Move(Vector2 dir) {
             ApplyMovingForce(dir);
