@@ -17,11 +17,9 @@ public class DialogSystem : MonoBehaviour
 
     //private Coroutine voicelinesCoroutine;
     private Voiceline currentLine;
-
-
     private bool start;
     private bool wait;
-    public int currentIndex;
+    private int currentIndex;
     private Coroutine waitCoroutine;
     // Start is called before the first frame update
     void Start()

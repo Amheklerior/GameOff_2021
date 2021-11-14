@@ -532,7 +532,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1873378536}
   - component: {fileID: 1873378535}
-  - component: {fileID: 1873378534}
   - component: {fileID: 1873378538}
   - component: {fileID: 1873378537}
   m_Layer: 0
@@ -542,20 +541,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1873378534
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1873378533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a02913f40d9b21c4b87b59cccc6e44ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1238283619}
-  moveSpeed: 0.025
 --- !u!212 &1873378535
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -644,7 +629,6 @@ MonoBehaviour:
   - text: And finally, this is the last one. Bye bye!
     pause: 0
   textDisplayer: {fileID: 1873378538}
-  currentIndex: 0
 --- !u!114 &1873378538
 MonoBehaviour:
   m_ObjectHideFlags: 0
