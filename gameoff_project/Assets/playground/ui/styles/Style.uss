@@ -1,0 +1,60 @@
+.main-menu-btn-style {
+    width: 80%;
+    height: 60px;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 23px;
+    border-bottom-left-radius: 23px;
+    border-top-right-radius: 23px;
+    border-bottom-right-radius: 23px;
+    border-left-color: rgba(149, 149, 149, 0);
+    border-right-color: rgba(149, 149, 149, 0);
+    border-top-color: rgba(149, 149, 149, 0);
+    border-bottom-color: rgba(149, 149, 149, 0);
+    font-size: 20px;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    -unity-text-align: middle-center;
+}
+
+.main-menu-btn-style:hover {
+    width: 80%;
+    height: 60px;
+    background-color: rgb(200, 200, 200);
+    border-top-left-radius: 23px;
+    border-bottom-left-radius: 23px;
+    border-top-right-radius: 23px;
+    border-bottom-right-radius: 23px;
+    border-left-color: rgba(149, 149, 149, 0);
+    border-right-color: rgba(149, 149, 149, 0);
+    border-top-color: rgba(149, 149, 149, 0);
+    border-bottom-color: rgba(149, 149, 149, 0);
+    font-size: 20px;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    -unity-text-align: middle-center;
+}
+
+.main-menu-btn-style:active {
+    width: 80%;
+    height: 60px;
+    background-color: rgb(200, 200, 200);
+    border-top-left-radius: 23px;
+    border-bottom-left-radius: 23px;
+    border-top-right-radius: 23px;
+    border-bottom-right-radius: 23px;
+    border-left-color: rgba(149, 149, 149, 0);
+    border-right-color: rgba(149, 149, 149, 0);
+    border-top-color: rgba(149, 149, 149, 0);
+    border-bottom-color: rgba(149, 149, 149, 0);
+    font-size: 25px;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    -unity-text-align: middle-center;
+    color: rgba(255, 0, 0, 255);
+}
