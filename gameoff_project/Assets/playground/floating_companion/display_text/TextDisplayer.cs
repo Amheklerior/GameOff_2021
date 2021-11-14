@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,20 +13,28 @@ public class TextDisplayer : MonoBehaviour
     [SerializeField]
     [Tooltip("Char-to-char delay for display animation")]
     private float charToCharDelay = 0.05f;
-    [SerializeField]
-    [Tooltip("Key used to skip the display text animation")]
-    private KeyCode keyToSkip = KeyCode.Space;
+    //[SerializeField]
+    //[Tooltip("Key used to skip the display text animation")]
+    //private KeyCode keyToSkip = KeyCode.Space;
+
+
     [SerializeField]
     [Tooltip("Set whether text will be displayed right after it is setted or not")]
     private bool autoplay = false;
 
+    private bool animationInProgress;
+    private bool animationFinished;
+
     private Coroutine coroutineInstance;
     
-    void Start()
+    void Awake()
     {
-        Display();
+        animationInProgress = false;
+        animationFinished = false;
+        //Display();
     }
 
+    /*
     void Update()
     {
         if (Input.GetKeyDown(keyToSkip))
@@ -33,7 +42,7 @@ public class TextDisplayer : MonoBehaviour
             SkipAnimation();
         }
     }
-
+    */
 
     public void Display()
     {
@@ -43,12 +52,16 @@ public class TextDisplayer : MonoBehaviour
 
     private IEnumerator DisplayAnimation()
     {
+        animationInProgress = true;
+        animationFinished = false;
         uiTextComponent.text = "";
         foreach (char c in textToDisplay.ToCharArray())
         {
             uiTextComponent.text += c;
             yield return new WaitForSeconds(charToCharDelay);
         }
+        animationInProgress = false;
+        animationFinished = true;
     }
 
 
@@ -56,6 +69,8 @@ public class TextDisplayer : MonoBehaviour
     {
         StopCoroutine(coroutineInstance);
         uiTextComponent.text = textToDisplay;
+        animationInProgress = false;
+        animationFinished = true;
     }
     public void SetText(string text)
     {
@@ -64,5 +79,19 @@ public class TextDisplayer : MonoBehaviour
         {
             Display();
         }
+    }
+    internal void setAutoplay(bool value)
+    {
+        autoplay = value;
+    }
+
+    public bool isAnimationInProgress()
+    {
+        return animationInProgress;
+    }
+
+    public bool isAnimationFinished()
+    {
+        return animationFinished;
     }
 }

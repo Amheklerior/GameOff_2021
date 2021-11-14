@@ -1,9 +1,7 @@
 {
-    "name": "com.amheklerior.playground.display_text",
+    "name": "com.amheklerior.playground.ui",
     "rootNamespace": "",
-    "references": [
-        "Unity.TextMeshPro"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
