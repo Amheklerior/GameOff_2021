@@ -12,7 +12,8 @@ namespace gameoffjam {
         [SerializeField] private InputHandler _inputHandler;
 
         [Header("Settings:")]
-        [SerializeField][Range(0f, 0.5f)] private float _framingAnticipation = 0.25f;
+        [SerializeField][Range(0f, 0.5f)] private float _framingAnticipation = 0.35f;
+        [SerializeField][Range(0f, 0.25f)] private float _framingAnticipationStaticCorrection = 0.1f;
         [SerializeField][Range(0f, 1f)] private float _reframingTime = 0.1f;
         [SerializeField][Range(0f, 5f)] private float _reframeToCenterDelay = 3f;
 
@@ -29,11 +30,13 @@ namespace gameoffjam {
                     ResetReframingToCenterDelay();
                 }
                 if (!IsCurrentShotCloseEnough) ReframeShot();
-                UpdateTransformPosition();
+                UpdateInternalData();
             } else {
                 if (IsFrameCentered) return;
                 if (!HasCenteringDelayPassed) {
                     ComputeReframingToCenterDelay();
+                    SetStaticFramingTarget();
+                    ReframeShot();
                     return;
                 }
                 if (HasDeadzone) SetNoDeadzone();
@@ -79,6 +82,7 @@ namespace gameoffjam {
         #region Action framing management
 
         private float _prevXPosition;
+        private bool _facingRight = true;
         private float _velocity = 0.0f;
         private bool IsCameraMoving => IsCameraMovingToTheRight || IsCameraMovingToTheLeft;
         private bool IsCameraMovingToTheRight => transform.position.x > _prevXPosition;
@@ -92,12 +96,20 @@ namespace gameoffjam {
                 ?  _screenCenterX - _framingAnticipation 
                 : _screenCenterX + _framingAnticipation;
         }
+        private void SetStaticFramingTarget() {
+            _targetScreenX = _facingRight 
+                ?  _screenCenterX - _framingAnticipation + _framingAnticipationStaticCorrection 
+                : _screenCenterX + _framingAnticipation - _framingAnticipationStaticCorrection;
+        }
 
         private void ReframeShot() {
             _transposer.m_ScreenX = Mathf.SmoothDamp(_transposer.m_ScreenX, _targetScreenX, ref _velocity, _reframingTime);
         }
 
-        private void UpdateTransformPosition() => _prevXPosition = transform.position.x;
+        private void UpdateInternalData() {
+            _prevXPosition = transform.position.x;
+            _facingRight = MovingToTheRight;
+        }
 
         #endregion
 
