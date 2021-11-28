@@ -31,6 +31,11 @@ namespace gameoffjam {
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private float _groundRaycastLength = 0.6f;
 
+        [Header("Audio clips:")]
+        [SerializeField] private AudioClip _jumpSoundClip;
+        [SerializeField] private AudioClip _landSoundClip;
+        [SerializeField] private AudioClip _moveSoundClip;
+
         #endregion
 
         #region Component Lifecycle
@@ -73,6 +78,7 @@ namespace gameoffjam {
         private Rigidbody2D _rb;
         private CharacterController _controller; 
         private Animator _animator;
+        private AudioSource _audioPlayer;
         private PlayerAnimationController _animController;
         private SpriteRenderer _sprite;
         private Vector2 _movementDir;
@@ -83,19 +89,26 @@ namespace gameoffjam {
         private bool _isFacingRight => !_sprite.flipX;
         private bool _isFacingLeft => _sprite.flipX;
         private bool _changedDirection {
-            get => _controller.IsMovingToTheRight && _isFacingLeft || _controller.IsMovingToTheLeft && _isFacingRight;
+            get => _input.IsMovementInputGiven && (
+                _controller.IsMovingToTheRight && _isFacingLeft || 
+                _controller.IsMovingToTheLeft && _isFacingRight
+            );
         }
 
         private void SetupDependencies() {
             _rb = GetComponent<Rigidbody2D>();
+            _sprite = GetComponent<SpriteRenderer>();
+            _animator = GetComponent<Animator>();
+            _audioPlayer = GetComponent<AudioSource>();
+
             if (!_rb) 
                 throw new NullReferenceException("Player: No Rigidbody2D component has been attached to the player object!");
-            _sprite = GetComponent<SpriteRenderer>();
             if (!_sprite) 
-                Debug.LogWarning("Player: No SpriteRenderer component has been attached to the player object!");
-            _animator = GetComponent<Animator>();
+                throw new NullReferenceException("Player: No SpriteRenderer component has been attached to the player object!");
             if (!_animator) 
-                Debug.LogWarning("Player: No Animator component has been attached to the player object!");
+                throw new NullReferenceException("Player: No Animator component has been attached to the player object!");
+            if (!_audioPlayer) 
+                throw new NullReferenceException("Player: No AudioSource component has been attached to the player object!");
             if (!_input) 
                 throw new NullReferenceException("Player: No ref to the input handler has been found!");
         }
@@ -111,7 +124,7 @@ namespace gameoffjam {
                 _fallGravityMultiplier,
                 _lowJumpGravityMultiplier
             );
-            if (_animator) _animController = new PlayerAnimationController(_animator);
+            _animController = new PlayerAnimationController(_animator);
         }
 
         private void TearDown() {
@@ -138,6 +151,34 @@ namespace gameoffjam {
 
         private void DrawGroundRayChecker() { 
             Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _groundRaycastLength);
+        }
+
+        #endregion
+
+        #region Audio Management
+
+        private void PlayJumpSound() {
+            _audioPlayer.clip = _jumpSoundClip;
+            _audioPlayer.loop = false;
+            _audioPlayer.Play();
+        }
+
+        private void PlayLandingSound() {
+            _audioPlayer.clip = _landSoundClip;
+            _audioPlayer.loop = false;
+            _audioPlayer.Play();
+        }
+        
+        private void PlayMovementSound() {
+            if (_audioPlayer.clip == _moveSoundClip && _audioPlayer.isPlaying) return;
+            _audioPlayer.clip = _moveSoundClip;
+            _audioPlayer.loop = true;
+            _audioPlayer.Play();
+        }
+
+        private void StopAudio() {
+            _audioPlayer.Stop();
+            _audioPlayer.clip = null;
         }
 
         #endregion
